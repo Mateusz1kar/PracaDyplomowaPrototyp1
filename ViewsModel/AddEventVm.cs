@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Threading.Tasks;
+using PracaDyplomowa.Models;
 
 namespace PracaDyplomowa.ViewsModel
 {
@@ -26,5 +27,8 @@ namespace PracaDyplomowa.ViewsModel
         [Required(ErrorMessage = "Data zakończenia jest wymagana")]
         [DataType(DataType.DateTime)]
         public DateTime DateEnd { get; set; }
+        public string UserName { get; set; }
+        public FirmAccount FirmAccount { get; set; }
+        public List<Publication> Publications { get; set; }
     }
 }

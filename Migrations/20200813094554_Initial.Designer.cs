@@ -10,8 +10,8 @@ using PracaDyplomowa.Models;
 namespace PracaDyplomowa.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20200601193715_Events")]
-    partial class Events
+    [Migration("20200813094554_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -235,6 +235,9 @@ namespace PracaDyplomowa.Migrations
                         .HasColumnType("nvarchar(1000)")
                         .HasMaxLength(1000);
 
+                    b.Property<string>("FirmAccountUserName")
+                        .HasColumnType("nvarchar(450)");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasColumnType("nvarchar(100)")
@@ -249,9 +252,63 @@ namespace PracaDyplomowa.Migrations
                         .HasColumnType("nvarchar(300)")
                         .HasMaxLength(300);
 
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
                     b.HasKey("EventId");
 
+                    b.HasIndex("FirmAccountUserName");
+
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("PracaDyplomowa.Models.FirmAccount", b =>
+                {
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FirmDescriotion")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("FirmName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("UserName");
+
+                    b.ToTable("FirmAccounts");
+                });
+
+            modelBuilder.Entity("PracaDyplomowa.Models.Publication", b =>
+                {
+                    b.Property<int>("EventId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("TokenText")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.HasKey("EventId", "TokenText");
+
+                    b.HasIndex("TokenText");
+
+                    b.ToTable("Publications");
+                });
+
+            modelBuilder.Entity("PracaDyplomowa.Models.Token", b =>
+                {
+                    b.Property<string>("TokenText")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("FirmAccountUserName")
+                        .HasColumnType("nvarchar(450)");
+
+                    b.Property<string>("UserName")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("TokenText");
+
+                    b.HasIndex("FirmAccountUserName");
+
+                    b.ToTable("Tokens");
                 });
 
             modelBuilder.Entity("Microsoft.AspNetCore.Identity.IdentityRoleClaim<string>", b =>
@@ -303,6 +360,35 @@ namespace PracaDyplomowa.Migrations
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("PracaDyplomowa.Models.Event", b =>
+                {
+                    b.HasOne("PracaDyplomowa.Models.FirmAccount", "FirmAccount")
+                        .WithMany("Events")
+                        .HasForeignKey("FirmAccountUserName");
+                });
+
+            modelBuilder.Entity("PracaDyplomowa.Models.Publication", b =>
+                {
+                    b.HasOne("PracaDyplomowa.Models.Event", "Event")
+                        .WithMany("Publications")
+                        .HasForeignKey("EventId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("PracaDyplomowa.Models.Token", "Token")
+                        .WithMany()
+                        .HasForeignKey("TokenText")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("PracaDyplomowa.Models.Token", b =>
+                {
+                    b.HasOne("PracaDyplomowa.Models.FirmAccount", "FirmAccount")
+                        .WithMany("Tokens")
+                        .HasForeignKey("FirmAccountUserName");
                 });
 #pragma warning restore 612, 618
         }

@@ -30,6 +30,9 @@ namespace PracaDyplomowa
         {
             services.AddDbContext<AppDbContext>(options => options.UseSqlServer(Configuration.GetConnectionString("DefaultConnection")));//³¹czenie z baz¹
             services.AddTransient<IEventRepozytory, EventRepozytory>();
+            services.AddTransient<IFirmAccoutRepozytory, FirmAccountRepozytory>();
+            services.AddTransient<IPublicationRepozytory, PublicationRepozytory>();
+            services.AddTransient<ITokenRepozytory, TokenRepozytory>();
             services.AddControllersWithViews();
             //autoryzacja urzytkownika
             services.AddIdentity<IdentityUser, IdentityRole>().AddEntityFrameworkStores<AppDbContext>();

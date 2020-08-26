@@ -3,7 +3,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PracaDyplomowa.Migrations
 {
-    public partial class Initial_Account : Migration
+    public partial class Initial : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -44,6 +44,19 @@ namespace PracaDyplomowa.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_AspNetUsers", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "FirmAccounts",
+                columns: table => new
+                {
+                    UserName = table.Column<string>(nullable: false),
+                    FirmName = table.Column<string>(nullable: true),
+                    FirmDescriotion = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_FirmAccounts", x => x.UserName);
                 });
 
             migrationBuilder.CreateTable(
@@ -152,6 +165,75 @@ namespace PracaDyplomowa.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "Events",
+                columns: table => new
+                {
+                    EventId = table.Column<int>(nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Name = table.Column<string>(maxLength: 100, nullable: false),
+                    ShortDescription = table.Column<string>(maxLength: 300, nullable: true),
+                    Description = table.Column<string>(maxLength: 1000, nullable: false),
+                    Place = table.Column<string>(maxLength: 200, nullable: false),
+                    DateStart = table.Column<DateTime>(nullable: false),
+                    DateEnd = table.Column<DateTime>(nullable: false),
+                    UserName = table.Column<string>(nullable: true),
+                    FirmAccountUserName = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Events", x => x.EventId);
+                    table.ForeignKey(
+                        name: "FK_Events_FirmAccounts_FirmAccountUserName",
+                        column: x => x.FirmAccountUserName,
+                        principalTable: "FirmAccounts",
+                        principalColumn: "UserName",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Tokens",
+                columns: table => new
+                {
+                    TokenText = table.Column<string>(nullable: false),
+                    UserName = table.Column<string>(nullable: true),
+                    FirmAccountUserName = table.Column<string>(nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Tokens", x => x.TokenText);
+                    table.ForeignKey(
+                        name: "FK_Tokens_FirmAccounts_FirmAccountUserName",
+                        column: x => x.FirmAccountUserName,
+                        principalTable: "FirmAccounts",
+                        principalColumn: "UserName",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Publications",
+                columns: table => new
+                {
+                    EventId = table.Column<int>(nullable: false),
+                    TokenText = table.Column<string>(nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Publications", x => new { x.EventId, x.TokenText });
+                    table.ForeignKey(
+                        name: "FK_Publications_Events_EventId",
+                        column: x => x.EventId,
+                        principalTable: "Events",
+                        principalColumn: "EventId",
+                        onDelete: ReferentialAction.Cascade);
+                    table.ForeignKey(
+                        name: "FK_Publications_Tokens_TokenText",
+                        column: x => x.TokenText,
+                        principalTable: "Tokens",
+                        principalColumn: "TokenText",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_AspNetRoleClaims_RoleId",
                 table: "AspNetRoleClaims",
@@ -190,6 +272,21 @@ namespace PracaDyplomowa.Migrations
                 column: "NormalizedUserName",
                 unique: true,
                 filter: "[NormalizedUserName] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Events_FirmAccountUserName",
+                table: "Events",
+                column: "FirmAccountUserName");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Publications_TokenText",
+                table: "Publications",
+                column: "TokenText");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Tokens_FirmAccountUserName",
+                table: "Tokens",
+                column: "FirmAccountUserName");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
@@ -210,10 +307,22 @@ namespace PracaDyplomowa.Migrations
                 name: "AspNetUserTokens");
 
             migrationBuilder.DropTable(
+                name: "Publications");
+
+            migrationBuilder.DropTable(
                 name: "AspNetRoles");
 
             migrationBuilder.DropTable(
                 name: "AspNetUsers");
+
+            migrationBuilder.DropTable(
+                name: "Events");
+
+            migrationBuilder.DropTable(
+                name: "Tokens");
+
+            migrationBuilder.DropTable(
+                name: "FirmAccounts");
         }
     }
 }

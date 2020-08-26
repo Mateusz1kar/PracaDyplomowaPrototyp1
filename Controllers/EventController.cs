@@ -28,7 +28,7 @@ namespace PracaDyplomowa.Controllers
         [HttpPost]
         public IActionResult AddEvent(AddEventVM model)
         {
-            if (ModelState.IsValid)
+            if (ModelState.IsValid & User.Identity.IsAuthenticated)
             {
                 Event e = new Event
                 {
@@ -37,7 +37,9 @@ namespace PracaDyplomowa.Controllers
                     Description = model.Description,
                     Place = model.Place,
                     DateStart = model.DateStart,
-                    DateEnd = model.DateEnd
+                    DateEnd = model.DateEnd,
+                     UserName=User.Identity.Name,
+                      Publications = new List<Publication>()
                 };
                 _eventRepozytory.addEvent(e);
 

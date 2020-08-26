@@ -16,6 +16,7 @@ namespace PracaDyplomowa.Repozytory
         }
         public void addEvent(Event e)
         {
+            e.FirmAccount = _appDbContext.FirmAccounts.Find(e.UserName);
             _appDbContext.Events.Add(e);
             _appDbContext.SaveChanges();
         }

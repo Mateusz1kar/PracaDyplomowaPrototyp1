@@ -28,6 +28,10 @@ namespace PracaDyplomowa.Models
         [Required(ErrorMessage = "Data zakończenia jest wymagana")]
         [DataType(DataType.DateTime)]
         public DateTime DateEnd { get; set; }
+        public string UserName { get; set; }
+        public FirmAccount FirmAccount { get; set; }
+        public List<Publication> Publications { get; set; }
+
 
     }
 }
